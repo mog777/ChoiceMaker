@@ -9,6 +9,7 @@ import android.view.View;
 
 import org.allison.choicemaker21.util.IntentKeys;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
+import org.allison.choicemaker21.util.views.FillScreenGrid;
 import org.allison.choicemaker21.util.views.MultiSelectGroup;
 
 import java.util.List;
@@ -33,12 +34,9 @@ public class WordScreen extends ActionBarActivity {
     }
 
     private View createView() {
-        final MultiSelectGroup categoryNamesGroup =
-                new MultiSelectGroup(
-                        MultiSelectGroup.Mode.SINGLE_SELECT,
-                        words,
-                        this);
-        return categoryNamesGroup.createView();
+        FillScreenGrid grid = new FillScreenGrid(words, this);
+        return grid.createView();
+
     }
 
 
