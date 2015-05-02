@@ -6,9 +6,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import org.allison.choicemaker21.data.CategoryData;
+import org.allison.choicemaker21.util.OnClickUserInput;
 import org.allison.choicemaker21.view.MultiSelectGroup;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 public class MainScreen extends ActionBarActivity {
@@ -18,10 +20,27 @@ public class MainScreen extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_screen);
 
-        CategoryData categoryData = new CategoryData(this);
+        final CategoryData categoryData = new CategoryData(this);
 
-        MultiSelectGroup categoryNamesGroup = new MultiSelectGroup(Arrays.asList("foo", "bar"), this);
-        categoryNamesGroup.withButtonAtBottom("add category");
+        final MultiSelectGroup categoryNamesGroup =
+                new MultiSelectGroup(
+                        categoryData.getNames(),
+                        this);
+
+        categoryNamesGroup.withButtonAtBottom(
+                "add category",
+                new OnClickUserInput(this) {
+                    @Override
+                    public void onInput(String input) {
+                        categoryData.addName(input);
+                        final MultiSelectGroup categoryNamesGroup =
+                                new MultiSelectGroup(
+                                        categoryData.getNames(),
+                                        MainScreen.this);
+                        setContentView(categoryNamesGroup.createView());
+                    }
+                }
+        );
 
         //getSupportActionBar().
 

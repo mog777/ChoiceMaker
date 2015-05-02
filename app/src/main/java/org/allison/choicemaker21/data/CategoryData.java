@@ -35,6 +35,15 @@ public class CategoryData {
     }
 
     public List<String> getNames() {
-        return names;
+        return new ArrayList(names);
+    }
+
+    public void addName(String name) {
+        names.add(name);
+        SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, 0);
+        Set<String> categories = sharedPref.getStringSet(NAMES_KEY, Collections.<String>emptySet());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putStringSet(NAMES_KEY, new HashSet<String>(names));
+        editor.commit();
     }
 }

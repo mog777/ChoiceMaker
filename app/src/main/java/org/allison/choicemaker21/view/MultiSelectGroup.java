@@ -20,14 +20,16 @@ public class MultiSelectGroup {
     private final Context context;
 
     private String bottomText;
+    private View.OnClickListener bottomOnClick;
 
     public MultiSelectGroup(List<String> names, Context context) {
         this.names = names;
         this.context = context;
     }
 
-    public MultiSelectGroup withButtonAtBottom(String text) {
+    public MultiSelectGroup withButtonAtBottom(String text, View.OnClickListener onClick) {
         this.bottomText = text;
+        this.bottomOnClick = onClick;
         return this;
     }
 
@@ -69,6 +71,7 @@ public class MultiSelectGroup {
         Button button = new Button(context);
         button.setClickable(true);
         button.setText(bottomText);
+        button.setOnClickListener(bottomOnClick);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
