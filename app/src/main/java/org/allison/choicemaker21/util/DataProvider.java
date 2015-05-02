@@ -3,5 +3,6 @@ package org.allison.choicemaker21.util;
 /**
  * Created by Allison on 5/2/2015.
  */
-public interface StringProvider extends DataProvider<String> {
+public interface DataProvider<T> {
+    T getData();
 }

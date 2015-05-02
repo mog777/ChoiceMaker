@@ -15,6 +15,8 @@ import org.allison.choicemaker21.util.SimpleTextInputButton;
 import org.allison.choicemaker21.util.StaticStringProvider;
 import org.allison.choicemaker21.view.MultiSelectGroup;
 
+import java.util.List;
+
 
 public class MainScreen extends ActionBarActivity {
 
@@ -54,23 +56,13 @@ public class MainScreen extends ActionBarActivity {
                                 {
                                     @Override
                                     public void confirmed() {
-                                        categoryData.removeName("");
+                                        List<String> selected = categoryNamesGroup.getSelected();
+                                        categoryData.removeNames(selected);
                                         setContentView(createView());
                                     }
                                 }
                         )
                 ).createView());
-        /*
-        categoryNamesGroup.withBottomView(
-                new SimpleTextInputButton(this, "Add Category",
-                        new OnInput() {
-                            @Override
-                            public void onInput(String input) {
-                                categoryData.addName(input);
-                                setContentView(createView());
-                            }
-                        }));
-                        */
 
         return categoryNamesGroup.createView();
     }

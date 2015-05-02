@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.widget.Button;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -47,12 +48,15 @@ public class CategoryData {
         editor.commit();
     }
 
-    public void removeName(String name) {
-        names.remove(name);
+    public void removeNames(Collection<String> removeNames) {
+        names.removeAll(removeNames);
         SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, 0);
-        Set<String> categories = sharedPref.getStringSet(NAMES_KEY, Collections.<String>emptySet());
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putStringSet(NAMES_KEY, new HashSet<String>(names));
         editor.commit();
+    }
+
+    public void removeName(String name) {
+        this.removeNames(Collections.singleton(name));
     }
 }

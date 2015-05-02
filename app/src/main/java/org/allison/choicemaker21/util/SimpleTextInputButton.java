@@ -6,7 +6,7 @@ import android.widget.Button;
 /**
  * Created by Allison on 5/2/2015.
  */
-public class SimpleTextInputButton extends Button {
+public class SimpleTextInputButton<T> extends Button {
 
     private final OnInput onInput;
 

@@ -12,7 +12,7 @@ public class StaticStringProvider implements StringProvider {
     }
 
     @Override
-    public String getString() {
+    public String getData() {
         return string;
     }
 }
