@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.allison.choicemaker21.data.CategoryData;
 import org.allison.choicemaker21.util.OnClickUserInput;
@@ -18,8 +19,10 @@ public class MainScreen extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_screen);
+        setContentView(createView());
+    }
 
+    private View createView() {
         final CategoryData categoryData = new CategoryData(this);
 
         final MultiSelectGroup categoryNamesGroup =
@@ -33,18 +36,12 @@ public class MainScreen extends ActionBarActivity {
                     @Override
                     public void onInput(String input) {
                         categoryData.addName(input);
-                        final MultiSelectGroup categoryNamesGroup =
-                                new MultiSelectGroup(
-                                        categoryData.getNames(),
-                                        MainScreen.this);
-                        setContentView(categoryNamesGroup.createView());
+                        setContentView(createView());
                     }
                 }
         );
 
-        //getSupportActionBar().
-
-        setContentView(categoryNamesGroup.createView());
+        return categoryNamesGroup.createView();
     }
 
 
