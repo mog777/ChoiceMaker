@@ -9,8 +9,7 @@ import android.view.View;
 
 import org.allison.choicemaker21.util.IntentKeys;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
-import org.allison.choicemaker21.util.views.FillScreenGrid;
-import org.allison.choicemaker21.util.views.MultiSelectGroup;
+import org.allison.choicemaker21.util.views.FillScreenColumns;
 
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class WordScreen extends ActionBarActivity {
     }
 
     private View createView() {
-        FillScreenGrid grid = new FillScreenGrid(words, this);
+        FillScreenColumns grid = new FillScreenColumns(words, this);
         return grid.createView();
 
     }

@@ -15,14 +15,16 @@ import java.util.List;
 /**
  * Created by Allison on 5/2/2015.
  */
-public class FillScreenGrid {
+public class FillScreenColumns {
 
     private View createdView;
 
     private final List<String> names;
     private final Context context;
 
-    public FillScreenGrid(List<String> names, Context context) {
+    public FillScreenColumns(
+            List<String> names,
+            Context context) {
         this.names = names;
         this.context = context;
     }
