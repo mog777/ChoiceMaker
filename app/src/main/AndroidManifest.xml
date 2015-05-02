@@ -20,6 +20,10 @@
             android:name=".CategoryScreen"
             android:label="@string/title_activity_category_screen" >
         </activity>
+        <activity
+            android:name=".WordScreen"
+            android:label="@string/title_activity_word_screen" >
+        </activity>
     </application>
 
 </manifest>

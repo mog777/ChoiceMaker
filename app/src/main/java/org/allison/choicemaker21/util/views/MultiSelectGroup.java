@@ -1,4 +1,4 @@
-package org.allison.choicemaker21.view;
+package org.allison.choicemaker21.util.views;
 
 import android.content.Context;
 import android.util.SparseBooleanArray;
@@ -16,14 +16,24 @@ import java.util.List;
  */
 public class MultiSelectGroup {
 
+    public enum Mode {
+        SINGLE_SELECT,
+        MULTI_SELECT
+    }
+
     private final List<String> names;
     private final Context context;
+    private final Mode selectMode;
     private View bottomView;
 
     private ListView listView;
     private View createdView;
 
-    public MultiSelectGroup(List<String> names, Context context) {
+    public MultiSelectGroup(
+            Mode mode,
+            List<String> names,
+            Context context) {
+        this.selectMode = mode;
         this.names = names;
         this.context = context;
 
@@ -50,7 +60,14 @@ public class MultiSelectGroup {
 
         {
             listView = new ListView(context);
-            listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+            switch (selectMode) {
+                case SINGLE_SELECT:
+                    listView.setChoiceMode(AbsListView.CHOICE_MODE_SINGLE);
+                    break;
+                case MULTI_SELECT:
+                    listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+                    break;
+            }
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<String>(
                             context,

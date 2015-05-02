@@ -1,18 +1,16 @@
 package org.allison.choicemaker21.util.transferable;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.List;
 
 /**
  * Created by Allison on 5/2/2015.
  */
-public class MainToActivity extends JacksonTransfer<MainToActivity> {
+public class MainToCategoryScreen extends JacksonTransfer<MainToCategoryScreen> {
 
     private List<String> categories;
 
-    public MainToActivity() {
-        super(MainToActivity.class);
+    public MainToCategoryScreen() {
+        super(MainToCategoryScreen.class);
     }
 
     public List<String> getCategories() {

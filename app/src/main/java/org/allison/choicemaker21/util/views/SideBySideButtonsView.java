@@ -1,4 +1,4 @@
-package org.allison.choicemaker21.util;
+package org.allison.choicemaker21.util.views;
 
 import android.content.Context;
 import android.view.View;

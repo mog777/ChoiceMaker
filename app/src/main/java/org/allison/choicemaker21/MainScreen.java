@@ -8,16 +8,16 @@ import android.view.View;
 import android.widget.Button;
 
 import org.allison.choicemaker21.data.CategoryData;
-import org.allison.choicemaker21.util.SideBySideButtonsView;
+import org.allison.choicemaker21.util.views.SideBySideButtonsView;
 import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
 import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
 import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.callback.VoidCallback;
 import org.allison.choicemaker21.util.provider.DataProvider;
 import org.allison.choicemaker21.util.provider.StaticStringProvider;
-import org.allison.choicemaker21.util.transferable.MainToActivity;
+import org.allison.choicemaker21.util.transferable.MainToCategoryScreen;
 import org.allison.choicemaker21.util.transferable.Transferable;
-import org.allison.choicemaker21.view.MultiSelectGroup;
+import org.allison.choicemaker21.util.views.MultiSelectGroup;
 
 import java.util.List;
 
@@ -35,6 +35,7 @@ public class MainScreen extends ActionBarActivity {
 
         final MultiSelectGroup categoryNamesGroup =
                 new MultiSelectGroup(
+                        MultiSelectGroup.Mode.SINGLE_SELECT,
                         categoryData.getNames(),
                         this);
 
@@ -49,6 +50,7 @@ public class MainScreen extends ActionBarActivity {
         return categoryNamesGroup.createView();
     }
 
+    @SuppressWarnings("unchecked")
     private Button addCategoryButton(final CategoryData categoryData) {
         return new SimpleConfirmButton(
                 this,
@@ -63,6 +65,7 @@ public class MainScreen extends ActionBarActivity {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     private Button removeCategoryButton(
             final CategoryData categoryData,
             final MultiSelectGroup categoryNamesGroup) {
@@ -89,7 +92,7 @@ public class MainScreen extends ActionBarActivity {
                 new DataProvider<Transferable<?>>() {
                     @Override
                     public Transferable<?> getData() {
-                        MainToActivity data = new MainToActivity();
+                        MainToCategoryScreen data = new MainToCategoryScreen();
                         data.setCategories(multiSelectGroup.getSelected());
                         return data;
                     }
