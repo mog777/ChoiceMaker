@@ -15,9 +15,13 @@ import android.widget.EditText;
 public abstract class OnClickUserInput implements View.OnClickListener {
 
     private final Context context;
+    private final StringProvider title;
 
-    protected OnClickUserInput(Context context) {
+    public OnClickUserInput(
+            Context context,
+            StringProvider title ) {
         this.context = context;
+        this.title = title;
     }
 
     @Override
@@ -28,7 +32,7 @@ public abstract class OnClickUserInput implements View.OnClickListener {
         final EditText input = new EditText(context);
 
         alertDialogBuilder
-                .setTitle("Some Title")
+                .setTitle(title.getString())
                 .setMessage("Click yes to exit!")
                 .setCancelable(false)
                 .setView(input);

@@ -46,4 +46,13 @@ public class CategoryData {
         editor.putStringSet(NAMES_KEY, new HashSet<String>(names));
         editor.commit();
     }
+
+    public void removeName(String name) {
+        names.remove(name);
+        SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, 0);
+        Set<String> categories = sharedPref.getStringSet(NAMES_KEY, Collections.<String>emptySet());
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putStringSet(NAMES_KEY, new HashSet<String>(names));
+        editor.commit();
+    }
 }

@@ -1,17 +1,19 @@
 package org.allison.choicemaker21;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import org.allison.choicemaker21.data.CategoryData;
-import org.allison.choicemaker21.util.OnClickUserInput;
+import org.allison.choicemaker21.util.OnConfirm;
+import org.allison.choicemaker21.util.OnInput;
+import org.allison.choicemaker21.util.SideBySideButtonsView;
+import org.allison.choicemaker21.util.SimpleConfirmButton;
+import org.allison.choicemaker21.util.SimpleTextInputButton;
+import org.allison.choicemaker21.util.StaticStringProvider;
 import org.allison.choicemaker21.view.MultiSelectGroup;
-
-import java.util.Arrays;
-import java.util.List;
 
 
 public class MainScreen extends ActionBarActivity {
@@ -30,16 +32,45 @@ public class MainScreen extends ActionBarActivity {
                         categoryData.getNames(),
                         this);
 
-        categoryNamesGroup.withButtonAtBottom(
-                "add category",
-                new OnClickUserInput(this) {
-                    @Override
-                    public void onInput(String input) {
-                        categoryData.addName(input);
-                        setContentView(createView());
-                    }
-                }
-        );
+        categoryNamesGroup.withBottomView(
+                new SideBySideButtonsView(
+                        this,
+                        new SimpleTextInputButton(
+                                this,
+                                "Add Category",
+                                new StaticStringProvider("Add Category Title"),
+                                new OnInput() {
+                                    @Override
+                                    public void onInput(String input) {
+                                        categoryData.addName(input);
+                                        setContentView(createView());
+                                    }
+                                }),
+                        new SimpleConfirmButton(
+                                this,
+                                "Delete",
+                                new StaticStringProvider("Delete Category Title"),
+                                new OnConfirm()
+                                {
+                                    @Override
+                                    public void confirmed() {
+                                        categoryData.removeName("");
+                                        setContentView(createView());
+                                    }
+                                }
+                        )
+                ).createView());
+        /*
+        categoryNamesGroup.withBottomView(
+                new SimpleTextInputButton(this, "Add Category",
+                        new OnInput() {
+                            @Override
+                            public void onInput(String input) {
+                                categoryData.addName(input);
+                                setContentView(createView());
+                            }
+                        }));
+                        */
 
         return categoryNamesGroup.createView();
     }

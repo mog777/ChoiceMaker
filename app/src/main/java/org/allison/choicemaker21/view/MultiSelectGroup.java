@@ -1,13 +1,16 @@
 package org.allison.choicemaker21.view;
 
 import android.content.Context;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import org.allison.choicemaker21.util.OnClickUserInput;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,24 +19,28 @@ import java.util.List;
 public class MultiSelectGroup {
 
     private final List<String> names;
-
     private final Context context;
+    private View bottomView;
 
-    private String bottomText;
-    private View.OnClickListener bottomOnClick;
+    private ListView listView;
+    private View createdView;
 
     public MultiSelectGroup(List<String> names, Context context) {
         this.names = names;
         this.context = context;
+
+
     }
 
-    public MultiSelectGroup withButtonAtBottom(String text, View.OnClickListener onClick) {
-        this.bottomText = text;
-        this.bottomOnClick = onClick;
+    public MultiSelectGroup withBottomView(View view) {
+        this.bottomView = view;
         return this;
     }
 
     public View createView() {
+        if (createdView != null) {
+            return createdView;
+        }
         LinearLayout layout = new LinearLayout(context);
         {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -44,7 +51,7 @@ public class MultiSelectGroup {
         }
 
         {
-            ListView listView = new ListView(context);
+            listView = new ListView(context);
             listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
             ArrayAdapter<String> adapter =
                     new ArrayAdapter<String>(
@@ -60,23 +67,34 @@ public class MultiSelectGroup {
             layout.addView(listView);
         }
 
-        if (bottomText != null) {
-            addBottom(layout);
+        if (bottomView != null) {
+            addBottomView(layout);
         }
 
-        return layout;
+        createdView = layout;
+        return createdView;
     }
 
-    private void addBottom(LinearLayout layout) {
-        Button button = new Button(context);
-        button.setClickable(true);
-        button.setText(bottomText);
-        button.setOnClickListener(bottomOnClick);
+    private void addBottomView(LinearLayout layout) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 0.0f);
-        button.setLayoutParams(params);
-        layout.addView(button);
+        bottomView.setLayoutParams(params);
+        layout.addView(bottomView);
     }
+
+    public List<String> getSelected() {
+        final List<String> ret = new ArrayList<>();
+        int len = listView.getCount();
+        SparseBooleanArray checked = listView.getCheckedItemPositions();
+        for (int i = 0; i < listView.getCount(); i++) {
+            if (checked.get(i)) {
+                String item = names.get(i);
+                ret.add(item);
+            }
+        }
+        return ret;
+    }
+
 }
