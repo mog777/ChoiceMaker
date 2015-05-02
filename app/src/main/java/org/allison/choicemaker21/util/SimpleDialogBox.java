@@ -12,13 +12,13 @@ import org.allison.choicemaker21.util.provider.StringProvider;
 /**
  * Created by Allison on 5/2/2015.
  */
-public class OnClickUserInput<T> implements View.OnClickListener {
+public class SimpleDialogBox<T> implements View.OnClickListener {
 
     private final Context context;
     private final StringProvider title;
     private Callback<T> callback;
 
-    public OnClickUserInput(
+    public SimpleDialogBox(
             Context context,
             StringProvider title,
             Callback<T> callback) {

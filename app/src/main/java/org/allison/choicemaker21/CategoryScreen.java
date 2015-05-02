@@ -1,9 +1,13 @@
 package org.allison.choicemaker21;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import org.allison.choicemaker21.util.IntentKeys;
+import org.allison.choicemaker21.util.transferable.MainToActivity;
 
 
 public class CategoryScreen extends ActionBarActivity {
@@ -11,6 +15,14 @@ public class CategoryScreen extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
+        Intent intent = getIntent();
+        byte[] bytes = intent.getByteArrayExtra(IntentKeys.SERIALIZED_DATA);
+        MainToActivity data = new MainToActivity();
+        data = data.deserialize(bytes);
+        for (String s : data.getCategories()) {
+            System.out.println("CAT : " + s);
+        }
         setContentView(R.layout.activity_category_screen);
     }
 

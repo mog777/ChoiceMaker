@@ -8,8 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import org.allison.choicemaker21.util.OnClickUserInput;
-
 import java.util.ArrayList;
 import java.util.List;
 

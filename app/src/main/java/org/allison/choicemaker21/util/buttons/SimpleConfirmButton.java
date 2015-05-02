@@ -3,7 +3,7 @@ package org.allison.choicemaker21.util.buttons;
 import android.content.Context;
 import android.widget.Button;
 
-import org.allison.choicemaker21.util.OnClickUserInput;
+import org.allison.choicemaker21.util.SimpleDialogBox;
 import org.allison.choicemaker21.util.callback.Callback;
 import org.allison.choicemaker21.util.provider.StringProvider;
 
@@ -22,6 +22,6 @@ public class SimpleConfirmButton<T> extends Button {
         this.setClickable(true);
         this.setText(buttonText);
         this.setOnClickListener(
-                new OnClickUserInput(context, confirmationTitle, callback));
+                new SimpleDialogBox(context, confirmationTitle, callback));
     }
 }

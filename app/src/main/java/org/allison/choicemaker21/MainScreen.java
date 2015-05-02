@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import org.allison.choicemaker21.data.CategoryData;
 import org.allison.choicemaker21.util.SideBySideButtonsView;
@@ -12,7 +13,10 @@ import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
 import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
 import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.callback.VoidCallback;
+import org.allison.choicemaker21.util.provider.DataProvider;
 import org.allison.choicemaker21.util.provider.StaticStringProvider;
+import org.allison.choicemaker21.util.transferable.MainToActivity;
+import org.allison.choicemaker21.util.transferable.Transferable;
 import org.allison.choicemaker21.view.MultiSelectGroup;
 
 import java.util.List;
@@ -37,34 +41,59 @@ public class MainScreen extends ActionBarActivity {
         categoryNamesGroup.withBottomView(
                 new SideBySideButtonsView(
                         this,
-                        new SimpleConfirmButton(
-                                this,
-                                "Add Category",
-                                new StaticStringProvider("Add Category"),
-                                new StringCallback() {
-                                    @Override
-                                    public void call(String input) {
-                                        categoryData.addName(input);
-                                        setContentView(createView());
-                                    }
-                                }),
-                        new SimpleConfirmButton(
-                                this,
-                                "Delete Category",
-                                new StaticStringProvider("Delete Category"),
-                                new VoidCallback() {
-                                    @Override
-                                    public void call(Void v) {
-                                        List<String> selected = categoryNamesGroup.getSelected();
-                                        categoryData.removeNames(selected);
-                                        setContentView(createView());
-                                    }
-                                }
-                        ),
-                        new GotoAnotherActivityButton(this, "Go!")
+                        addCategoryButton(categoryData),
+                        removeCategoryButton(categoryData, categoryNamesGroup),
+                        gotoCategoryButton(categoryNamesGroup)
                 ).createView());
 
         return categoryNamesGroup.createView();
+    }
+
+    private Button addCategoryButton(final CategoryData categoryData) {
+        return new SimpleConfirmButton(
+                this,
+                "Add Category",
+                new StaticStringProvider("Add Category"),
+                new StringCallback() {
+                    @Override
+                    public void call(String input) {
+                        categoryData.addName(input);
+                        setContentView(createView());
+                    }
+                });
+    }
+
+    private Button removeCategoryButton(
+            final CategoryData categoryData,
+            final MultiSelectGroup categoryNamesGroup) {
+        return new SimpleConfirmButton(
+                this,
+                "Delete Category",
+                new StaticStringProvider("Delete Category"),
+                new VoidCallback() {
+                    @Override
+                    public void call(Void v) {
+                        List<String> selected = categoryNamesGroup.getSelected();
+                        categoryData.removeNames(selected);
+                        setContentView(createView());
+                    }
+                }
+        );
+    }
+
+    private Button gotoCategoryButton(final MultiSelectGroup multiSelectGroup) {
+        return new GotoAnotherActivityButton(
+                this,
+                "Go!",
+                CategoryScreen.class,
+                new DataProvider<Transferable<?>>() {
+                    @Override
+                    public Transferable<?> getData() {
+                        MainToActivity data = new MainToActivity();
+                        data.setCategories(multiSelectGroup.getSelected());
+                        return data;
+                    }
+                });
     }
 
 
