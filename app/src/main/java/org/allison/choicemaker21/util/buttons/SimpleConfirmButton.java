@@ -1,7 +1,11 @@
-package org.allison.choicemaker21.util;
+package org.allison.choicemaker21.util.buttons;
 
 import android.content.Context;
 import android.widget.Button;
+
+import org.allison.choicemaker21.util.OnClickUserInput;
+import org.allison.choicemaker21.util.callback.Callback;
+import org.allison.choicemaker21.util.provider.StringProvider;
 
 /**
  * Created by Allison on 5/2/2015.
@@ -11,19 +15,13 @@ public class SimpleConfirmButton<T> extends Button {
             Context context,
             String buttonText,
             final StringProvider confirmationTitle,
-            final OnConfirm onConfirm) {
+            final Callback<T> callback) {
 
         super(context);
 
         this.setClickable(true);
         this.setText(buttonText);
         this.setOnClickListener(
-                new OnClickUserInput(context, confirmationTitle) {
-                    @Override
-                    public void onInput(String input) {
-                        onConfirm.confirmed();
-                    }
-                }
-        );
+                new OnClickUserInput(context, confirmationTitle, callback));
     }
 }

@@ -16,9 +16,9 @@ public class SideBySideButtonsView {
 
     private final List<View> views;
 
-    public SideBySideButtonsView(Context context, View v1, View v2) {
+    public SideBySideButtonsView(Context context, View... views) {
         this.context = context;
-        this.views = Arrays.asList(v1, v2);
+        this.views = Arrays.asList(views);
     }
 
     public View createView() {

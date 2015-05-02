@@ -7,12 +7,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.allison.choicemaker21.data.CategoryData;
-import org.allison.choicemaker21.util.OnConfirm;
-import org.allison.choicemaker21.util.OnInput;
 import org.allison.choicemaker21.util.SideBySideButtonsView;
-import org.allison.choicemaker21.util.SimpleConfirmButton;
-import org.allison.choicemaker21.util.SimpleTextInputButton;
-import org.allison.choicemaker21.util.StaticStringProvider;
+import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
+import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
+import org.allison.choicemaker21.util.callback.StringCallback;
+import org.allison.choicemaker21.util.callback.VoidCallback;
+import org.allison.choicemaker21.util.provider.StaticStringProvider;
 import org.allison.choicemaker21.view.MultiSelectGroup;
 
 import java.util.List;
@@ -37,31 +37,31 @@ public class MainScreen extends ActionBarActivity {
         categoryNamesGroup.withBottomView(
                 new SideBySideButtonsView(
                         this,
-                        new SimpleTextInputButton(
+                        new SimpleConfirmButton(
                                 this,
                                 "Add Category",
-                                new StaticStringProvider("Add Category Title"),
-                                new OnInput() {
+                                new StaticStringProvider("Add Category"),
+                                new StringCallback() {
                                     @Override
-                                    public void onInput(String input) {
+                                    public void call(String input) {
                                         categoryData.addName(input);
                                         setContentView(createView());
                                     }
                                 }),
                         new SimpleConfirmButton(
                                 this,
-                                "Delete",
-                                new StaticStringProvider("Delete Category Title"),
-                                new OnConfirm()
-                                {
+                                "Delete Category",
+                                new StaticStringProvider("Delete Category"),
+                                new VoidCallback() {
                                     @Override
-                                    public void confirmed() {
+                                    public void call(Void v) {
                                         List<String> selected = categoryNamesGroup.getSelected();
                                         categoryData.removeNames(selected);
                                         setContentView(createView());
                                     }
                                 }
-                        )
+                        ),
+                        new GotoAnotherActivityButton(this, "Go!")
                 ).createView());
 
         return categoryNamesGroup.createView();

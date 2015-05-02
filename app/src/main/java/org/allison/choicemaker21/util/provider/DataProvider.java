@@ -1,4 +1,4 @@
-package org.allison.choicemaker21.util;
+package org.allison.choicemaker21.util.provider;
 
 /**
  * Created by Allison on 5/2/2015.
