@@ -62,8 +62,12 @@ public class WordData {
     public void load() {
         names.clear();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] args = {};
-        Cursor cursor = db.rawQuery("SELECT * FROM " + WordTableMetadata.TABLE_NAME, args);
+        String[] args = {categoryName};
+        Cursor cursor = db.rawQuery(
+                String.format("SELECT * FROM %s WHERE %s = ?",
+                        WordTableMetadata.TABLE_NAME,
+                        WordTableMetadata.CATEGORY_NAME_COLUMN),
+                args);
         try {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
