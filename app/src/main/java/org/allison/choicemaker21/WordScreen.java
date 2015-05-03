@@ -1,6 +1,8 @@
 package org.allison.choicemaker21;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
@@ -48,7 +50,13 @@ public class WordScreen extends ActionBarActivity {
     private View createView() {
         Map<String, Object> wordMap = new HashMap<>();
         for(WordChoice w : words) {
-            wordMap.put(w.getWord(), w.getWord());
+            byte[] thumbnail = w.getThumbnail();
+            if(thumbnail != null && thumbnail.length > 0) {
+                Bitmap bmp = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length);
+                wordMap.put(w.getWord(), bmp);
+            } else {
+                wordMap.put(w.getWord(), w.getWord());
+            }
         }
         FillScreenColumns grid =
                 new FillScreenColumns(

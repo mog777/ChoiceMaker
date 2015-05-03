@@ -139,7 +139,7 @@ public class WordData {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] args = {categoryName, name};
         Cursor cursor = db.rawQuery(
-                String.format("SELECT %s FROM % WHERE %s = ? AND %s = ?",
+                String.format("SELECT %s FROM %s WHERE %s = ? AND %s = ?",
                         WordTableMetadata.THUMBNAIL_IMG_COLUMN,
                         WordTableMetadata.TABLE_NAME,
                         WordTableMetadata.CATEGORY_NAME_COLUMN,
