@@ -9,7 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
 
 /**
  * Created by Allison on 5/2/2015.
@@ -24,7 +27,7 @@ public class MultiSelectGroup {
     private final List<String> names;
     private final Context context;
     private final Mode selectMode;
-    private View bottomView;
+    private Queue<View> bottomViews = new LinkedList<>();
 
     private ListView listView;
     private View createdView;
@@ -41,7 +44,7 @@ public class MultiSelectGroup {
     }
 
     public MultiSelectGroup withBottomView(View view) {
-        this.bottomView = view;
+        bottomViews.add(view);
         return this;
     }
 
@@ -82,15 +85,15 @@ public class MultiSelectGroup {
             layout.addView(listView);
         }
 
-        if (bottomView != null) {
-            addBottomView(layout);
+        for(View v : bottomViews) {
+            addBottomView(layout, v);
         }
 
         createdView = layout;
         return createdView;
     }
 
-    private void addBottomView(LinearLayout layout) {
+    private void addBottomView(LinearLayout layout, View bottomView) {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,

@@ -1,59 +1,80 @@
 package org.allison.choicemaker21.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Button;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
+import org.allison.choicemaker21.data.sql.CategoryTableMetadata;
+import org.allison.choicemaker21.data.sql.DatabaseHelper;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Allison on 5/2/2015.
  */
 public class CategoryData {
 
-    private static final String PREFS_NAME = "CATEGORY_DATA";
-    private static final String NAMES_KEY = "names";
-
     private final List<String> names = new ArrayList<>();
 
-    private final Context context;
+    private final DatabaseHelper dbHelper;
 
     public CategoryData(Context context) {
-        this.context = context;
+        dbHelper = new DatabaseHelper(context);
         load();
     }
 
     public void load() {
         names.clear();
-        SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, 0);
-        Set<String> categories = sharedPref.getStringSet(NAMES_KEY, Collections.<String>emptySet());
-        names.addAll(categories);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] args = {};
+        Cursor cursor = db.rawQuery("SELECT * FROM " + CategoryTableMetadata.TABLE_NAME, args);
+        try {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                String name =
+                        cursor.getString(
+                                cursor.getColumnIndex(CategoryTableMetadata.CATEGORY_NAME_COLUMN));
+                names.add(name);
+                cursor.moveToNext();
+            }
+        } finally {
+            cursor.close();
+        }
     }
 
     public List<String> getNames() {
-        return new ArrayList(names);
+        return new ArrayList<>(names);
     }
 
     public void addName(String name) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(CategoryTableMetadata.CATEGORY_NAME_COLUMN, name);
+        db.insert(
+                CategoryTableMetadata.TABLE_NAME,
+                null,
+                values);
         names.add(name);
-        SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, 0);
-        Set<String> categories = sharedPref.getStringSet(NAMES_KEY, Collections.<String>emptySet());
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putStringSet(NAMES_KEY, new HashSet<String>(names));
-        editor.commit();
     }
 
     public void removeNames(Collection<String> removeNames) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        for (String name : removeNames) {
+            String selection = CategoryTableMetadata.CATEGORY_NAME_COLUMN + " = ?";
+            String[] args = {name};
+            db.delete(
+                    CategoryTableMetadata.TABLE_NAME,
+                    selection,
+                    args);
+        }
         names.removeAll(removeNames);
-        SharedPreferences sharedPref = context.getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putStringSet(NAMES_KEY, new HashSet<String>(names));
-        editor.commit();
     }
 
     public void removeName(String name) {

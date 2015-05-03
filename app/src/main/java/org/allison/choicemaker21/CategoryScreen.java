@@ -1,6 +1,7 @@
 package org.allison.choicemaker21;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -10,20 +11,26 @@ import android.widget.Button;
 
 import org.allison.choicemaker21.data.WordData;
 import org.allison.choicemaker21.util.IntentKeys;
-import org.allison.choicemaker21.util.callback.Predicate;
-import org.allison.choicemaker21.util.views.SideBySideButtonsView;
+import org.allison.choicemaker21.util.MediaSelectorDialog;
 import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
+import org.allison.choicemaker21.util.buttons.MediaSelectorButton;
 import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
+import org.allison.choicemaker21.util.callback.Predicate;
 import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.callback.VoidCallback;
 import org.allison.choicemaker21.util.provider.DataProvider;
 import org.allison.choicemaker21.util.provider.StaticStringProvider;
+import org.allison.choicemaker21.util.provider.StringProvider;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
 import org.allison.choicemaker21.util.transferable.MainToCategoryScreen;
 import org.allison.choicemaker21.util.transferable.Transferable;
+import org.allison.choicemaker21.util.transferable.WordChoice;
 import org.allison.choicemaker21.util.views.MultiSelectGroup;
+import org.allison.choicemaker21.util.views.SideBySideButtonsView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class CategoryScreen extends ActionBarActivity {
@@ -47,7 +54,7 @@ public class CategoryScreen extends ActionBarActivity {
     }
 
     private View createView() {
-        final WordData wordData = new WordData(this, category);
+        final WordData wordData = new WordData(this, category, true);
 
         final MultiSelectGroup categoryNamesGroup =
                 new MultiSelectGroup(
@@ -58,14 +65,21 @@ public class CategoryScreen extends ActionBarActivity {
         categoryNamesGroup.withBottomView(
                 new SideBySideButtonsView(
                         this,
+                        addMediaButton(categoryNamesGroup))
+                        .createView());
+
+        categoryNamesGroup.withBottomView(
+                new SideBySideButtonsView(
+                        this,
                         addWordButton(wordData),
                         removeWordButton(wordData, categoryNamesGroup),
-                        gotoWordActivityButton(categoryNamesGroup))
+                        gotoWordActivityButton(categoryNamesGroup, wordData))
                         .createView());
 
         return categoryNamesGroup.createView();
     }
 
+    @SuppressWarnings("unchecked")
     private Button addWordButton(final WordData wordData) {
         return new SimpleConfirmButton(
                 this,
@@ -80,6 +94,7 @@ public class CategoryScreen extends ActionBarActivity {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     private Button removeWordButton(
             final WordData wordData,
             final MultiSelectGroup categoryNamesGroup) {
@@ -98,7 +113,23 @@ public class CategoryScreen extends ActionBarActivity {
         );
     }
 
-    private Button gotoWordActivityButton(final MultiSelectGroup multiSelectGroup) {
+    private Button addMediaButton(final MultiSelectGroup categoryNamesGroup) {
+        return new MediaSelectorButton(this, "Add Media", new StringProvider() {
+            @Override
+            public String getData() {
+                List<String> selected = categoryNamesGroup.getSelected();
+                if (selected.isEmpty()) {
+                    return "";
+                } else {
+                    return selected.get(0);
+                }
+            }
+        });
+    }
+
+    private Button gotoWordActivityButton(
+            final MultiSelectGroup multiSelectGroup,
+            final WordData wordData) {
         return new GotoAnotherActivityButton(
                 this,
                 "Go!",
@@ -107,7 +138,15 @@ public class CategoryScreen extends ActionBarActivity {
                     @Override
                     public Transferable<?> getData() {
                         CategoryToWordScreen data = new CategoryToWordScreen();
-                        data.setWords(multiSelectGroup.getSelected());
+                        data.setCategory(category);
+                        List<WordChoice> choices = new ArrayList<>();
+                        for (String word : multiSelectGroup.getSelected()) {
+                            WordChoice choice = new WordChoice();
+                            choice.setWord(word);
+                            choice.setThumbnail(wordData.getThumbnail(word));
+                            choices.add(choice);
+                        }
+                        data.setWordChoices(choices);
                         return data;
                     }
                 },
@@ -141,5 +180,21 @@ public class CategoryScreen extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public final static AtomicReference<String> MEDIA_DIALOG_STRING = new AtomicReference<String>();
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MediaSelectorDialog.MEDIA_DIALOG_IMAGE_REQ_ID && resultCode == RESULT_OK) {
+            String name = MEDIA_DIALOG_STRING.get();
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            WordData wordData = new WordData(this, category, false);
+            wordData.addThumbnail(name, imageBitmap);
+            //mImageView.setImageBitmap(imageBitmap);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }

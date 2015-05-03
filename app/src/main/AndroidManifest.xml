@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.allison.choicemaker21" >
 
+    <!-- Added permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,6 +29,7 @@
             android:name=".WordScreen"
             android:label="@string/title_activity_word_screen" >
         </activity>
+
     </application>
 
 </manifest>

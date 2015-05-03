@@ -1,25 +1,31 @@
 package org.allison.choicemaker21;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.allison.choicemaker21.data.WordData;
 import org.allison.choicemaker21.util.IntentKeys;
 import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
+import org.allison.choicemaker21.util.transferable.WordChoice;
 import org.allison.choicemaker21.util.views.FillScreenColumns;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 
 public class WordScreen extends ActionBarActivity {
 
-    List<String> words;
+    List<WordChoice> words;
+
+    String category;
 
     private TextToSpeech tts;
 
@@ -34,21 +40,26 @@ public class WordScreen extends ActionBarActivity {
         byte[] bytes = intent.getByteArrayExtra(IntentKeys.SERIALIZED_DATA);
         CategoryToWordScreen data = new CategoryToWordScreen();
         data = data.deserialize(bytes);
-        words = data.getWords();
+        words = data.getWordChoices();
 
         setContentView(createView());
     }
 
     private View createView() {
-        FillScreenColumns grid = new FillScreenColumns(
-                words,
-                this,
-                new StringCallback() {
-                    @Override
-                    public void call(String s) {
-                        tts.speak(s, TextToSpeech.QUEUE_FLUSH, null);
-                    }
-                });
+        Map<String, Object> wordMap = new HashMap<>();
+        for(WordChoice w : words) {
+            wordMap.put(w.getWord(), w.getWord());
+        }
+        FillScreenColumns grid =
+                new FillScreenColumns(
+                        wordMap,
+                        this,
+                        new StringCallback() {
+                            @Override
+                            public void call(String s) {
+                                tts.speak(s, TextToSpeech.QUEUE_FLUSH, null);
+                            }
+                        });
         return grid.createView();
 
     }

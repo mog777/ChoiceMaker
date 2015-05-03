@@ -7,17 +7,27 @@ import java.util.List;
  */
 public class CategoryToWordScreen extends JacksonTransfer<CategoryToWordScreen> {
 
-    List<String> words;
+    List<WordChoice> wordChoices;
+
+    String category;
 
     public CategoryToWordScreen() {
         super(CategoryToWordScreen.class);
     }
 
-    public List<String> getWords() {
-        return words;
+    public List<WordChoice> getWordChoices() {
+        return wordChoices;
     }
 
-    public void setWords(List<String> words) {
-        this.words = words;
+    public void setWordChoices(List<WordChoice> wordChoices) {
+        this.wordChoices = wordChoices;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
