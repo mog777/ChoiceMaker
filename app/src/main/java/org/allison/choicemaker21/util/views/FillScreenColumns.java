@@ -1,22 +1,19 @@
 package org.allison.choicemaker21.util.views;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.view.Gravity;
+import android.util.Pair;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
-import org.allison.choicemaker21.util.AudioFile;
-import org.allison.choicemaker21.util.callback.Callback;
+import org.allison.choicemaker21.util.callback.VoidCallback;
+import org.allison.choicemaker21.util.provider.BitmapProvider;
+import org.allison.choicemaker21.util.provider.DataProvider;
+import org.allison.choicemaker21.util.provider.StringProvider;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Allison on 5/2/2015.
@@ -25,17 +22,14 @@ public class FillScreenColumns<T> {
 
     private View createdView;
 
-    private final Map<String, Object> names;
     private final Context context;
-    private final Callback<String> callback;
+    private final List<Pair<DataProvider, VoidCallback>> dataProviders;
 
     public FillScreenColumns(
-            Map<String, Object> names,
             Context context,
-            Callback<String> callback) {
-        this.names = names;
+            List<Pair<DataProvider, VoidCallback>> dataProviders) {
         this.context = context;
-        this.callback = callback;
+        this.dataProviders = dataProviders;
     }
 
     public View createView() {
@@ -52,18 +46,19 @@ public class FillScreenColumns<T> {
             layout.setOrientation(LinearLayout.HORIZONTAL);
         }
 
-        for (final Map.Entry<String, Object> entry : names.entrySet()) {
-            String name = entry.getKey();
-            Object value = entry.getValue();
+        for (final Pair<DataProvider, VoidCallback> pair : dataProviders) {
+            DataProvider dp = pair.first;
+            VoidCallback cb = pair.second;
 
             View v = null;
-            if (value == null || value instanceof AudioFile) {
-                v = createStringButton(name, name);
-            } else if (value instanceof String) {
-                v = createStringButton(name, (String) value);
-            } else if(value instanceof Bitmap) {
-                v = createImageButton(name, (Bitmap)value);
+            if (dp instanceof StringProvider) {
+                v = createStringButton(((StringProvider) dp).getData(), cb);
+            } else if (dp instanceof BitmapProvider) {
+                v = createImageButton(((BitmapProvider) dp).getData(), cb);
+            } else {
+                // TODO log error
             }
+
             if (v != null) {
                 layout.addView(v);
             }
@@ -73,40 +68,38 @@ public class FillScreenColumns<T> {
         return createdView;
     }
 
-    private Button createStringButton(final String name, final String text) {
+    private Button createStringButton(final String text, final VoidCallback vc) {
         Button button = new Button(context);
         button.setText(text);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 1.0f);
-        if (callback.getType().isAssignableFrom(String.class)) {
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.call(name);
-                }
-            });
-        }
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vc.call(null);
+                //callback.call(name);
+            }
+        });
         button.setLayoutParams(p);
         return button;
     }
 
-    private ImageButton createImageButton(final String name, final Bitmap bmp) {
+    private ImageButton createImageButton(final Bitmap bmp, final VoidCallback vc) {
         ImageButton button = new ImageButton(context);
         button.setImageBitmap(bmp);
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 1.0f);
-        if (callback.getType().isAssignableFrom(String.class)) {
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.call(name);
-                }
-            });
-        }
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vc.call(null);
+                //callback.call(name);
+            }
+        });
         button.setLayoutParams(p);
         return button;
     }

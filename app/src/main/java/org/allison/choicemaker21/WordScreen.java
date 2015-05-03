@@ -7,19 +7,24 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import org.allison.choicemaker21.data.WordData;
 import org.allison.choicemaker21.util.AudioFile;
 import org.allison.choicemaker21.util.IntentKeys;
 import org.allison.choicemaker21.util.callback.StringCallback;
+import org.allison.choicemaker21.util.callback.VoidCallback;
+import org.allison.choicemaker21.util.provider.BitmapProvider;
+import org.allison.choicemaker21.util.provider.DataProvider;
+import org.allison.choicemaker21.util.provider.StaticStringProvider;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
 import org.allison.choicemaker21.util.transferable.WordChoice;
 import org.allison.choicemaker21.util.views.FillScreenColumns;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -51,36 +56,46 @@ public class WordScreen extends ActionBarActivity {
     }
 
     private View createView() {
-        final Map<String, Object> wordMap = new HashMap<>();
+        final List<Pair<DataProvider, VoidCallback>> in = new ArrayList<>();
         for (WordChoice w : words) {
-            byte[] thumbnail = w.getThumbnail();
-            String audioFile = w.getAudioFile();
-            if (thumbnail != null && thumbnail.length > 0) {
-                Bitmap bmp = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length);
-                wordMap.put(w.getWord(), bmp);
-            } else if(audioFile != null && !audioFile.isEmpty()) {
-                wordMap.put(w.getWord(), new AudioFile(audioFile));
-            } else {
-                wordMap.put(w.getWord(), w.getWord());
-            }
+            in.add(createPairForChoice(w));
         }
-        FillScreenColumns grid =
-                new FillScreenColumns(
-                        wordMap,
-                        this,
-                        new StringCallback() {
-                            @Override
-                            public void call(String s) {
-                                Object o = wordMap.get(s);
-                                if (o instanceof AudioFile) {
-                                    startPlaying(((AudioFile)o).getFilename());
-                                } else {
-                                    tts.speak(s, TextToSpeech.QUEUE_FLUSH, null);
-                                }
-                            }
-                        });
+        FillScreenColumns grid = new FillScreenColumns(this, in);
+
         return grid.createView();
 
+    }
+
+    private Pair<DataProvider, VoidCallback> createPairForChoice(final WordChoice choice) {
+
+        DataProvider dp;
+        byte[] thumbnail = choice.getThumbnail();
+        if (thumbnail != null && thumbnail.length > 0) {
+            final Bitmap bmp = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length);
+            dp = new BitmapProvider(bmp);
+        } else {
+            dp = new StaticStringProvider(choice.getWord());
+        }
+
+        final String audioFile = choice.getAudioFile();
+        VoidCallback vc;
+        if (audioFile != null && !audioFile.isEmpty()) {
+            vc = new VoidCallback() {
+                @Override
+                public void call(Void aVoid) {
+                    startPlaying(audioFile);
+                }
+            };
+        } else {
+            vc = new VoidCallback() {
+                @Override
+                public void call(Void aVoid) {
+                    tts.speak(choice.getWord(), TextToSpeech.QUEUE_FLUSH, null);
+                }
+            };
+        }
+
+        return new Pair<>(dp, vc);
     }
 
 

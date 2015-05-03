@@ -119,7 +119,7 @@ public class CategoryScreen extends ActionBarActivity {
     }
 
     private Button addMediaButton(final MultiSelectGroup categoryNamesGroup) {
-        return new MediaSelectorButton(this, "Add Media", new StringProvider() {
+        return new MediaSelectorButton(this, "Take Picture", new StringProvider() {
             @Override
             public String getData() {
                 List<String> selected = categoryNamesGroup.getSelected();
@@ -138,7 +138,7 @@ public class CategoryScreen extends ActionBarActivity {
             ) {
         return new CaptureAudioButton(
                 this,
-                "Record",
+                "Record Voice",
                 CaptureAudioButton.Type.RECORDER,
                 new StringProvider() {
                     @Override
