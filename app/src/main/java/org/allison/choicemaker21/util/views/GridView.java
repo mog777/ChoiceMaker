@@ -1,14 +1,10 @@
 package org.allison.choicemaker21.util.views;
 
-import android.app.ActionBar;
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import org.allison.choicemaker21.util.callback.Callback;
 
@@ -17,7 +13,7 @@ import java.util.List;
 /**
  * Created by Allison on 5/2/2015.
  */
-public class FillScreenColumns<T> {
+public class GridView<T> {
 
     private View createdView;
 
@@ -25,7 +21,7 @@ public class FillScreenColumns<T> {
     private final Context context;
     private final Callback<T> callback;
 
-    public FillScreenColumns(
+    public GridView(
             List<String> names,
             Context context,
             Callback<T> callback) {
@@ -39,14 +35,9 @@ public class FillScreenColumns<T> {
             return createdView;
         }
 
-        LinearLayout layout = new LinearLayout(context);
-        {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            layout.setLayoutParams(params);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-        }
+        GridLayout layout = new GridLayout(context);
+        layout.setRowCount(2);
+        layout.setColumnCount(2);
 
         for(final String word : names) {
             Button button = new Button(context);

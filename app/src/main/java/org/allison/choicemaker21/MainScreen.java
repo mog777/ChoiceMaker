@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import org.allison.choicemaker21.data.CategoryData;
+import org.allison.choicemaker21.util.callback.Predicate;
 import org.allison.choicemaker21.util.views.SideBySideButtonsView;
 import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
 import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
@@ -96,7 +97,14 @@ public class MainScreen extends ActionBarActivity {
                         data.setCategories(multiSelectGroup.getSelected());
                         return data;
                     }
-                });
+                },
+                new Predicate<View>() {
+                    @Override
+                    public boolean success(View view) {
+                        return !multiSelectGroup.getSelected().isEmpty();
+                    }
+                }
+        );
     }
 
 

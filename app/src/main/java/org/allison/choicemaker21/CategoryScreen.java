@@ -10,6 +10,7 @@ import android.widget.Button;
 
 import org.allison.choicemaker21.data.WordData;
 import org.allison.choicemaker21.util.IntentKeys;
+import org.allison.choicemaker21.util.callback.Predicate;
 import org.allison.choicemaker21.util.views.SideBySideButtonsView;
 import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
 import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
@@ -38,7 +39,7 @@ public class CategoryScreen extends ActionBarActivity {
         byte[] bytes = intent.getByteArrayExtra(IntentKeys.SERIALIZED_DATA);
         MainToCategoryScreen data = new MainToCategoryScreen();
         data = data.deserialize(bytes);
-        if(data.getCategories().size() > 0) {
+        if (data.getCategories().size() > 0) {
             category = data.getCategories().get(0);
         }
 
@@ -109,7 +110,14 @@ public class CategoryScreen extends ActionBarActivity {
                         data.setWords(multiSelectGroup.getSelected());
                         return data;
                     }
-                });
+                },
+                new Predicate<View>() {
+                    @Override
+                    public boolean success(View view) {
+                        return !multiSelectGroup.getSelected().isEmpty();
+                    }
+                }
+        );
     }
 
 

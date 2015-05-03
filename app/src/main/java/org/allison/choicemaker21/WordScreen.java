@@ -1,6 +1,7 @@
 package org.allison.choicemaker21;
 
 import android.content.Intent;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,20 +9,26 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.allison.choicemaker21.util.IntentKeys;
+import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
 import org.allison.choicemaker21.util.views.FillScreenColumns;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class WordScreen extends ActionBarActivity {
 
     List<String> words;
 
+    private TextToSpeech tts;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
+
+        tts = initTextToSpeech();
 
         Intent intent = getIntent();
         byte[] bytes = intent.getByteArrayExtra(IntentKeys.SERIALIZED_DATA);
@@ -33,7 +40,15 @@ public class WordScreen extends ActionBarActivity {
     }
 
     private View createView() {
-        FillScreenColumns grid = new FillScreenColumns(words, this);
+        FillScreenColumns grid = new FillScreenColumns(
+                words,
+                this,
+                new StringCallback() {
+                    @Override
+                    public void call(String s) {
+                        tts.speak(s, TextToSpeech.QUEUE_FLUSH, null);
+                    }
+                });
         return grid.createView();
 
     }
@@ -59,5 +74,27 @@ public class WordScreen extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private TextToSpeech initTextToSpeech() {
+        TextToSpeech ret = new TextToSpeech(
+                WordScreen.this,
+                new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+
+                    }
+                });
+
+        ret.setLanguage(Locale.US);
+
+        return ret;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        tts.shutdown();
     }
 }
