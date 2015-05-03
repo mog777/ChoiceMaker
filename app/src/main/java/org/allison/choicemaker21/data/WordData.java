@@ -135,6 +135,50 @@ public class WordData {
 
     }
 
+    public void addAudioFile(String name, String filename) {
+        // New value for one column
+        ContentValues values = new ContentValues();
+        values.put(WordTableMetadata.RECORDED_AUDIO_FILE_COLUMN, filename);
+
+        String selection = WordTableMetadata.CATEGORY_NAME_COLUMN + " = ? AND " +
+                WordTableMetadata.WORD_NAME_COLUMN + " = ?";
+        String[] args = {categoryName, name};
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int count = db.update(
+                WordTableMetadata.TABLE_NAME,
+                values,
+                selection,
+                args);
+
+    }
+
+    public String getAudioFile(String name) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] args = {categoryName, name};
+        Cursor cursor = db.rawQuery(
+                String.format("SELECT %s FROM %s WHERE %s = ? AND %s = ?",
+                        WordTableMetadata.RECORDED_AUDIO_FILE_COLUMN,
+                        WordTableMetadata.TABLE_NAME,
+                        WordTableMetadata.CATEGORY_NAME_COLUMN,
+                        WordTableMetadata.WORD_NAME_COLUMN
+                ),
+                args);
+        try {
+            String ret = null;
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                ret = cursor.getString(cursor.getColumnIndex(WordTableMetadata.RECORDED_AUDIO_FILE_COLUMN));
+                names.add(name);
+                cursor.moveToNext();
+            }
+            return ret;
+        } finally {
+            cursor.close();
+        }
+
+    }
+
     public byte[] getThumbnail(String name) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         String[] args = {categoryName, name};

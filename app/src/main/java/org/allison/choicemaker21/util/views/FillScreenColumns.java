@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
+import org.allison.choicemaker21.util.AudioFile;
 import org.allison.choicemaker21.util.callback.Callback;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class FillScreenColumns<T> {
             Object value = entry.getValue();
 
             View v = null;
-            if (value == null) {
+            if (value == null || value instanceof AudioFile) {
                 v = createStringButton(name, name);
             } else if (value instanceof String) {
                 v = createStringButton(name, (String) value);

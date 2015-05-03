@@ -3,6 +3,7 @@ package org.allison.choicemaker21;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.ActionBarActivity;
@@ -11,12 +12,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.allison.choicemaker21.data.WordData;
+import org.allison.choicemaker21.util.AudioFile;
 import org.allison.choicemaker21.util.IntentKeys;
 import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.transferable.CategoryToWordScreen;
 import org.allison.choicemaker21.util.transferable.WordChoice;
 import org.allison.choicemaker21.util.views.FillScreenColumns;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,12 +51,15 @@ public class WordScreen extends ActionBarActivity {
     }
 
     private View createView() {
-        Map<String, Object> wordMap = new HashMap<>();
-        for(WordChoice w : words) {
+        final Map<String, Object> wordMap = new HashMap<>();
+        for (WordChoice w : words) {
             byte[] thumbnail = w.getThumbnail();
-            if(thumbnail != null && thumbnail.length > 0) {
+            String audioFile = w.getAudioFile();
+            if (thumbnail != null && thumbnail.length > 0) {
                 Bitmap bmp = BitmapFactory.decodeByteArray(thumbnail, 0, thumbnail.length);
                 wordMap.put(w.getWord(), bmp);
+            } else if(audioFile != null && !audioFile.isEmpty()) {
+                wordMap.put(w.getWord(), new AudioFile(audioFile));
             } else {
                 wordMap.put(w.getWord(), w.getWord());
             }
@@ -65,7 +71,12 @@ public class WordScreen extends ActionBarActivity {
                         new StringCallback() {
                             @Override
                             public void call(String s) {
-                                tts.speak(s, TextToSpeech.QUEUE_FLUSH, null);
+                                Object o = wordMap.get(s);
+                                if (o instanceof AudioFile) {
+                                    startPlaying(((AudioFile)o).getFilename());
+                                } else {
+                                    tts.speak(s, TextToSpeech.QUEUE_FLUSH, null);
+                                }
                             }
                         });
         return grid.createView();
@@ -115,5 +126,26 @@ public class WordScreen extends ActionBarActivity {
         super.onDestroy();
 
         tts.shutdown();
+    }
+
+    private void startPlaying(String audioFile) {
+        final MediaPlayer mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(audioFile);
+            mPlayer.prepare();
+            mPlayer.start();
+            mPlayer.setOnCompletionListener(
+                    new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mPlayer.release();
+                        }
+                    }
+
+            );
+        } catch (IOException e) {
+            //Log.e(LOG_TAG, "prepare() failed");
+            e.printStackTrace();
+        }
     }
 }

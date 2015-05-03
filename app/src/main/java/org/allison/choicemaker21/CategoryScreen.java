@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,9 +13,11 @@ import android.widget.Button;
 import org.allison.choicemaker21.data.WordData;
 import org.allison.choicemaker21.util.IntentKeys;
 import org.allison.choicemaker21.util.MediaSelectorDialog;
+import org.allison.choicemaker21.util.buttons.CaptureAudioButton;
 import org.allison.choicemaker21.util.buttons.GotoAnotherActivityButton;
 import org.allison.choicemaker21.util.buttons.MediaSelectorButton;
 import org.allison.choicemaker21.util.buttons.SimpleConfirmButton;
+import org.allison.choicemaker21.util.callback.Callback;
 import org.allison.choicemaker21.util.callback.Predicate;
 import org.allison.choicemaker21.util.callback.StringCallback;
 import org.allison.choicemaker21.util.callback.VoidCallback;
@@ -65,7 +68,9 @@ public class CategoryScreen extends ActionBarActivity {
         categoryNamesGroup.withBottomView(
                 new SideBySideButtonsView(
                         this,
-                        addMediaButton(categoryNamesGroup))
+                        addMediaButton(categoryNamesGroup),
+                        recordAudioButton(categoryNamesGroup, wordData)
+                )
                         .createView());
 
         categoryNamesGroup.withBottomView(
@@ -127,6 +132,56 @@ public class CategoryScreen extends ActionBarActivity {
         });
     }
 
+    private Button recordAudioButton(
+            final MultiSelectGroup categoryNamesGroup,
+            final WordData wordData
+            ) {
+        return new CaptureAudioButton(
+                this,
+                "Record",
+                CaptureAudioButton.Type.RECORDER,
+                new StringProvider() {
+                    @Override
+                    public String getData() {
+                        List<String> selected = categoryNamesGroup.getSelected();
+                        if (selected.isEmpty()) {
+                            return "";
+                        } else {
+                            return category + "_" + selected.get(0);
+                        }
+                    }
+                },
+                new StringProvider() {
+                    @Override
+                    public String getData() {
+                        List<String> selected = categoryNamesGroup.getSelected();
+                        if (selected.isEmpty()) {
+                            return "";
+                        } else {
+                            return selected.get(0);
+                        }
+                    }
+                },
+                new Callback<Pair<String,String>>() {
+                    @Override
+                    public Class<Pair<String, String>> getType() {
+                        //TODO fix this
+                        return (Class<Pair<String, String>>) this.getClass().getGenericSuperclass();
+                    }
+
+                    @Override
+                    public void call(Pair<String, String> stringStringPair) {
+                        wordData.addAudioFile(stringStringPair.first, stringStringPair.second);
+                    }
+                });
+    }
+
+    /*
+    private Button playAudioButton() {
+        return new CaptureAudioButton(this, "Play", CaptureAudioButton.Type.PLAYER);
+    }
+    */
+
     private Button gotoWordActivityButton(
             final MultiSelectGroup multiSelectGroup,
             final WordData wordData) {
@@ -137,17 +192,18 @@ public class CategoryScreen extends ActionBarActivity {
                 new DataProvider<Transferable<?>>() {
                     @Override
                     public Transferable<?> getData() {
-                        CategoryToWordScreen data = new CategoryToWordScreen();
-                        data.setCategory(category);
                         List<WordChoice> choices = new ArrayList<>();
                         for (String word : multiSelectGroup.getSelected()) {
                             WordChoice choice = new WordChoice();
                             choice.setWord(word);
                             choice.setThumbnail(wordData.getThumbnail(word));
+                            choice.setAudioFile(wordData.getAudioFile(word));
                             choices.add(choice);
                         }
-                        data.setWordChoices(choices);
-                        return data;
+                        CategoryToWordScreen categoryToWordScreen = new CategoryToWordScreen();
+                        categoryToWordScreen.setCategory(category);
+                        categoryToWordScreen.setWordChoices(choices);
+                        return categoryToWordScreen;
                     }
                 },
                 new Predicate<View>() {

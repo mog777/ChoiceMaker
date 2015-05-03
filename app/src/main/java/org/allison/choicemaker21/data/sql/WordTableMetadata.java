@@ -16,6 +16,8 @@ public class WordTableMetadata implements DatabaseTableMetadata {
 
     public static final String THUMBNAIL_IMG_COLUMN = "thumbnail_img";
 
+    public static final String RECORDED_AUDIO_FILE_COLUMN = "recorded_audio_file";
+
     @Override
     public String getTableName() {
         return TABLE_NAME;
@@ -26,7 +28,8 @@ public class WordTableMetadata implements DatabaseTableMetadata {
         return Arrays.asList(
                 Columns.create(CATEGORY_NAME_COLUMN, TableColumn.Type.TEXT, 2),
                 Columns.create(WORD_NAME_COLUMN, TableColumn.Type.TEXT, 2),
-                Columns.create(THUMBNAIL_IMG_COLUMN, TableColumn.Type.BLOB, 3)
+                Columns.create(THUMBNAIL_IMG_COLUMN, TableColumn.Type.BLOB, 3),
+                Columns.create(RECORDED_AUDIO_FILE_COLUMN, TableColumn.Type.TEXT, 4)
         );
     }
 

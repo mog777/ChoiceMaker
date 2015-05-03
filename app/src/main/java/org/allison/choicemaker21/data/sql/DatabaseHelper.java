@@ -18,7 +18,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         TABLES.add(new WordTableMetadata());
     }
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "ChoiceMaker.db";
 
     private static final String COMMA_SEP = ",";

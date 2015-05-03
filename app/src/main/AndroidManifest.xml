@@ -4,6 +4,8 @@
 
     <!-- Added permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
@@ -29,7 +31,10 @@
             android:name=".WordScreen"
             android:label="@string/title_activity_word_screen" >
         </activity>
-
+        <activity
+            android:name=".CaptureAudioActivity"
+            android:label="@string/title_activity_capture_audio" >
+        </activity>
     </application>
 
 </manifest>

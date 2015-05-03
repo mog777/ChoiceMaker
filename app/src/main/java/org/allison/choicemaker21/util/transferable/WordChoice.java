@@ -11,6 +11,8 @@ public class WordChoice {
 
     private byte[] thumbnail;
 
+    private String audioFile;
+
     public byte[] getThumbnail() {
         return thumbnail;
     }
@@ -25,5 +27,13 @@ public class WordChoice {
 
     public void setWord(String word) {
         this.word = word;
+    }
+
+    public String getAudioFile() {
+        return audioFile;
+    }
+
+    public void setAudioFile(String audioFile) {
+        this.audioFile = audioFile;
     }
 }
